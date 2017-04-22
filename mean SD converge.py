@@ -9,6 +9,34 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.widgets import Slider, Button
 
+def ask():
+    
+    # Cue users to type in the distribution they are drawing from
+    distribution = input("What distribution do you want to sample from? ")
+    
+    if distribution.lower() in dir(np.random):
+        if distribution.lower() == "normal":
+            param1 = input("What mean do you want to use for the normal distribution? ")
+            param2 = input("What standard deviation do you want to use for the normal distribution? ")
+            param3 = input("What sample size do you want to use for the normal distribution? ")
+        elif distribution.lower() == "logistic":
+            param1 = input("What mean do you want to use for the logistic distribution? ")
+            param2 = input("What scale do you want to use for the logistic distribution? (greater than 0): ")
+            param3 = input("What sample size do you want to use for the logistic distribution? ")
+        else:
+            print("For now, this just supports 'normal' and 'logistic' distributions. Please go back and select one of these!")
+        return((distribution.lower(),int(param1),int(param2),int(param3)))
+
+    else:
+        print("\nThis distribution is not available in numpy's random module. Please select another one from the below:\n\n", ", ".join(dir(np.random)[16:]),"\n\n")
+        ask()
+
+# Call ask() function and store the user-selected distribution in a variable
+dist_tup = ask()
+dist = dist_tup[0]
+param1 = dist_tup[1]
+param2 = dist_tup[2]
+param3 = dist_tup[3]
 
 def update(val):
     sigma = setSD.val
@@ -25,7 +53,7 @@ def update(val):
     mtot = []
     sdtot = []
     while i < numTimes:
-        s = np.random.normal(mu, sigma, N)
+        s = eval("np.random."+dist+"("+str(param1)+", "+str(param2)+", "+str(param3)+")")
         i2 = 1
         m = []
         sd = []
@@ -75,7 +103,7 @@ fig5 = plt.figure(figsize=(14,7),edgecolor = 'black',frameon=False,tight_layout=
 ax4 = plt.subplot(111)
 fig2 = plt.figure(figsize=(14,7),edgecolor = 'black',frameon=False,tight_layout=True)
 mu, sigma = 1, .68 # mean and standard deviation
-s = np.random.normal(mu, sigma, 2000)
+s = eval("np.random."+dist+"("+str(param1)+", "+str(param2)+", "+str(param3)+")")
 mean = []
 SD = []
 plots = []
